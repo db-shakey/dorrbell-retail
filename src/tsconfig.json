@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "dom"],
+    "mapRoot": "./",
+    "module": "es6",
+    "moduleResolution": "node",
+    "outDir": "../dist/out-tsc",
+    "sourceMap": true,
+    "target": "es5",
+    "typeRoots": [
+      "../node_modules/@types"
+    ]
+  },
+  "files" : [
+    "../node_modules/angularfire2/firebase3.d.ts",
+    "main.ts",
+    "typings.d.ts"
+  ],
+  "filesGlob": [
+    "main.ts",
+    "typings.d.ts",
+    "app/**/*.ts"
+  ]
+}

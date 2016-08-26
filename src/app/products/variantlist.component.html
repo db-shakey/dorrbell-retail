@@ -1,0 +1,36 @@
+<div class="p-w-md">
+  <table class="striped">
+    <thead>
+      <th>Name</th>
+      <th>Last Modified</th>
+      <th>Inventory Quantity</th>
+      <th>List Price</th>
+      <th>Actual Price</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of cache">
+        <td class="variant-name">{{item.Name}}</td>
+        <td class="last-modified">
+          {{item.LastModifiedDate | date:'short'}}
+        </td>
+        <td>
+          <div class="input-field valign left-align">
+            <input type="text" [(ngModel)]="item.Inventory_Quantity__c" name="inventory" class="input-numeric" (focus)="highlight($event)" (keyup)="onChange(item)" [textMask]="numberMask"/>
+          </div>
+        </td>
+        <td>
+          <div class="input-field valign left-align">
+            <i class="material-icons prefix">attach_money</i>
+            <input type="text" [(ngModel)]="item.PricebookEntries.records[0].UnitPrice" name="unitPrice" (focus)="highlight($event)" class="input-currency" (keyup)="onChange(item)" [textMask]="currencyMask"/>
+          </div>
+        </td>
+        <td>
+          <div class="input-field valign left-align">
+            <i class="material-icons prefix">attach_money</i>
+            <input type="text" [(ngModel)]="item.PricebookEntries.records[0].Display_Price__c" name="displayPrice" (focus)="highlight($event)" class="input-currency" (keyup)="onChange(item)" [textMask]="currencyMask"/>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

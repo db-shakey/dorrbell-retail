@@ -1,0 +1,30 @@
+.metrics{
+  .card{
+    .card-content{
+      padding: 0;
+    }
+    .card-title {
+      border-bottom: 1px solid #ccc;
+      padding: .2rem 1rem;
+      .badge{
+        line-height: initial;
+        padding: 3px 7px;
+        margin-top: 1rem;
+      }
+    }
+    .card-body{
+      padding: 1rem 1rem 2rem 2rem;
+    }
+  }
+}
+.card-title{
+  .btn{
+    font-size: initial;
+  }
+}
+#case-modal{
+  max-width: 40rem;
+  .modal-footer{
+    padding: 0 25px;
+  }
+}

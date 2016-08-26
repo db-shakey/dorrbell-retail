@@ -1,0 +1,80 @@
+<div class="row animated fadeInRight" *ngIf="userService.loggedIn">
+
+
+  <form class="card-container">
+    <div class="row">
+      <div class="input-field col s4">
+        <input id="name" type="text" class="validate" [(ngModel)]="filterName" name="filterName">
+        <label for="name">Product Name</label>
+      </div>
+      <div class="input-field col s4">
+        <input id="family" type="tel" class="validate" [(ngModel)]="filterFamily" name="filterFamily">
+        <label for="family">Family</label>
+      </div>
+      <div class="input-field col s2">
+        <select #sortSelect>
+          <option value="Name">Name</option>
+          <option value="Family">Family</option>
+          <option value="Brand__c">Brand</option>
+          <option value="SKU__c">SKU</option>
+          <option value="Variants__r.totalSize">Variants</option>
+          <option value="Published_At__c">Published Date</option>
+        </select>
+        <label>Sort By</label>
+      </div>
+
+      <div class="input-field col s2">
+        <select #itemCount>
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+        <label>Item Count</label>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="row">
+    <div class="col s2 offset-s10 right-align m-r-xl">
+      <div class="m-r-xl">Published At</div>
+    </div>
+    <div class="col s12">
+      <ul class="collapsible popout" #collapsible>
+        <li *ngFor = "let item of items | async | filter : [filterName, filterFamily] | orderBy : [direction + sort] | slice:start:end; trackBy:index">
+          <div (click)="selectRow(item.Id, $event)" [class]="selectedProduct == item.Id ? 'active collapsible-header row' : 'collapsible-header row'">
+            <div class="col s1 valign-wrapper">
+              <img [src]="item.Images__r?.records[0]?.Image_Thumb__c" class="valign"/>
+            </div>
+            <div class="col s4">
+              <a href="javascript:void(0);">{{item.Name}}</a>
+              <div class="m-t-n-sm">{{item.Variants__r.totalSize}} Variants</div>
+            </div>
+            <div class="col s4">
+              <div>{{item.Family}}</div>
+              <div class="m-t-n-sm">{{item.SKU__c}}</div>
+            </div>
+            <div class="col s3 right-align">
+              <p>{{item.Published_At__c | date: 'short'}} <p>
+            </div>
+          </div>
+          <div class="collapsible-body">
+            <div class="variant-row" [productId]="item.Id" *ngIf="selectedProduct == item.Id || previousProduct == item.Id" (onloaded)="renderRow($event)" (changed)="changed($event)" [(cache)]="cache[item.Id]"></div>
+          </div>
+        </li>
+      </ul>
+      <ul class="pagination center-align m-t-xl">
+        <li [class.disabled]="currentPage == 1" class="waves-effect">
+          <a href="javascript:void(0);" (click)="goToPage(currentPage - 1)"><i class="material-icons">chevron_left</i></a>
+        </li>
+        <li *ngFor="let page of pageArray" [class.active]="currentPage == page" class="waves-effect">
+          <a href="javascript:void(0);" (click)="goToPage(page)">{{page}}</a>
+        </li>
+        <li class="waves-effect" [class.disabled]="currentPage == (pageArray?.length)">
+          <a href="javascript:void(0);" (click)="goToPage(currentPage + 1)"><i class="material-icons">chevron_right</i></a>
+        </li>
+       </ul>
+    </div>
+  </div>
+</div>

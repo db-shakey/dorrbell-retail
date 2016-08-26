@@ -1,0 +1,177 @@
+<div class="animated fadeInRight" *ngIf="userService.loggedIn">
+  <div class="row metrics">
+    <div class="col s12 m4">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">
+            Income
+            <span class="new badge" data-badge-caption="">Monthly</span>
+          </div>
+          <div class="card-body">
+            <h5>{{metrics.income | currency: 'USD':true:'1.2-2'}}</h5>
+            <p>Total this month</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m4">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">
+            Orders
+            <span class="new badge" data-badge-caption="">Weekly</span>
+          </div>
+          <div class="card-body">
+            <h5>{{metrics.orders}}</h5>
+            <p>New this week</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col s12 m4">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">
+            Products
+            <span class="new badge" data-badge-caption="">Total</span>
+          </div>
+          <div class="card-body">
+            <h5>{{(metrics.products | async)?.$value}}</h5>
+            <p>Total products on Dorrbell</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">Orders waiting your approval</div>
+          <table class="striped responsive-table">
+            <thead>
+              <th data-field="id">Order Id</th>
+              <th data-field="Customer">Customer</th>
+              <th data-field="price">Amount</th>
+              <th data-field="time">Order Date</th>
+              <th data-field="delivery-date">Delivery Date</th>
+              <th data-field="item-count">Number of items</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of orders | async | orderBy: ['+Order__r.In_Home_Try_On_Start__c'] | slice:1:5">
+                <td><a href="#">{{item.Order__r.Name}}</a></td>
+                <td>{{item.Order__r.ShipToContact.Name}}</td>
+                <td>{{item.Total__c | currency: 'USD':true:'1.2-2'}}</td>
+                <td>{{item.CreatedDate | date:'short'}}</td>
+                <td>{{item.Order__r.In_Home_Try_On_Start__c | date:'short'}}</td>
+                <td>{{item.Order_Products__r.totalSize}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12 m5">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">My Team</div>
+          <table class="striped responsive-table">
+            <thead>
+              <tr>
+                  <th data-field="Name">Name</th>
+                  <th data-field="Notification" class="center-align">Notifications</th>
+                  <th data-field="Enabled" class="center-align">Enabled</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of team | async">
+                <td>{{user.Name}}</td>
+                <td class="center-align">
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input type="checkbox" [checked]="user.Do_Not_Text__c != true" name="sendSms" (change)="smsChange(user, $event)">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                </td>
+                <td class="center-align">
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input type="checkbox" [checked]="user.Status__c == 'Active'" (change)="statusChange(user, $event)">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col s12 m7">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">
+            Support Tickets
+            <a class="waves-effect waves-light btn pull-right modal-trigger" href="#case-modal">New</a>
+          </div>
+          <table class="striped responsive-table">
+            <thead>
+              <tr>
+                  <th data-field="id">Case #</th>
+                  <th data-field="name">Opened</th>
+                  <th data-field="price">Subject</th>
+                  <th data-field="price">Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let case of cases | async">
+                <td>{{case.CaseNumber}} </td>
+                <td>{{case.CreatedDate | date:'short'}}</td>
+                <td>{{case.Subject}}</td>
+                <td>{{case.Status}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Structure -->
+<div id="case-modal" #caseModal class="modal">
+  <form class="col s12" [formGroup]="caseForm" (ngSubmit)="onSubmit(caseForm.value)">
+    <div class="modal-content">
+      <h4>Open a Ticket</h4>
+      <div class="row">
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="first_name" type="text" class="validate" [class.invalid]="!caseForm.find('subject').valid" required formControlName="subject">
+            <label for="first_name">Subject</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <textarea id="textarea1" class="materialize-textarea" [class.invalid]="!caseForm.find('description').valid" required formControlName="description"></textarea>
+            <label for="textarea1">Description</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer p-w-md">
+      <button type="submit" class=" modal-action waves-effect btn">Submit</button>
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+  </form>
+</div>

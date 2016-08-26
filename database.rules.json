@@ -1,0 +1,46 @@
+{
+  "rules": {
+    "customers": {
+      "$firebaseId": {
+        ".read": "$firebaseId === auth.uid",
+        ".write": "false",
+        "contact": {
+          "Carts__r": {
+            ".write": "$firebaseId === auth.uid",
+            ".read": "$firebaseId === auth.uid"
+          },
+          "Events": {
+            ".write": "$firebaseId === auth.uid",
+            ".read": "$firebaseId === auth.uid"
+          }
+        }
+      }
+    },
+    "locations": {
+      ".read": "true",
+      ".write": "false"
+    },
+    "menu": {
+      ".read": "true",
+      ".write": "auth.uid === 'N3VAFaRBouO9wi7QjSi3XGkazaU2'"
+    },
+    "retailers": {
+      "$Id": {
+        ".read": "$Id.contains(root.child('customers').child(auth.uid).child('contact').child('Store__c').val())",
+        ".write": "$Id.contains(root.child('customers').child(auth.uid).child('contact').child('Store__c').val())",
+        "products": {
+          ".indexOn": [
+            "Parent_Product__c",
+            "RecordType/DeveloperName"
+          ]
+        },
+        "orders" : {
+          ".indexOn" : [
+            "Order__r/Marked_Completed__c",
+            "Order__r/In_Home_Try_On_Start__c"
+          ]
+        }
+      }
+    }
+  }
+}

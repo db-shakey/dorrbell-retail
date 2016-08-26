@@ -1,0 +1,40 @@
+// table{
+//   th{
+//     a{
+//       color: black;
+//       cursor: pointer;
+//       display: inherit;
+//     }
+//   }
+//   .product-row{
+//     img{
+//       width: 2.5rem;
+//       min-height: 3.75rem;
+//     }
+//     td{
+//       padding: 5px;
+//     }
+//   }
+// }
+.card-container{
+  background-color: white;
+  margin-bottom: 2rem;
+  padding: 1rem 1rem 0.1rem 1rem;
+}
+.collapsible{
+  img {
+    width: 100%;
+    max-width: 4rem;
+    max-height: 7rem;
+  }
+  .row{
+    margin-bottom: 0;
+    padding: 3px 1rem 3px 0;
+
+    min-height: 5rem;
+    p{
+      margin: 0;
+      font-weight: 700;
+    }
+  }
+}

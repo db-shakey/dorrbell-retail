@@ -1,0 +1,80 @@
+<div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <ul class="left hide-on-med-and-up">
+        <li><a href="#" data-activates="slide-out" class="button-collapse" #menuButton><i class="material-icons">menu</i></a></li>
+      </ul>
+      <a [routerLink]="['/']" class="brand-logo">
+        <img src="/assets/images/splash.png"/>
+        <span>Dorrbell</span>
+      </a>
+      <ul class="right">
+        <li *ngFor = "let control of controlsService.controls">
+          <a [class]="(control.disabled || herokuService.loading) ? 'waves-effect waves-light btn disabled' : 'waves-effect waves-light btn'"
+              (click)="!control.disabled && !herokuService.loading && control.callback()">
+              {{(herokuService.loading) ? control.saveLabel : control.label}}
+          </a>
+        </li>
+        <li><a href="javascript:void(0)" class="dropdown-button" data-activates="more-dropdown" #dropdownButton><i class="material-icons">more_vert</i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul id="more-dropdown" class="dropdown-content">
+    <li><a href="javascript:void(0)" (click)="logout()">Logout</a></li>
+  </ul>
+
+  <div class="progress" *ngIf="herokuService.loading">
+      <div class="indeterminate"></div>
+  </div>
+</div>
+<div id="slide-out" class="side-nav fixed collection with-header" [hidden]="!userService.loggedIn">
+  <div class="collection-item profile">
+    <img [src]="store.Store_Logo__c"/>
+    <div>
+      {{user.contact?.Name}}
+      <muted>{{store.Name}}</muted>
+    </div>
+  </div>
+  <a [routerLink]="['/']" class="collection-item"><i class="material-icons left">home</i>Home</a>
+  <a [routerLink]="['/orders']" class="collection-item"><i class="material-icons left">view_list</i>Orders</a>
+  <a [routerLink]="['/products']" class="collection-item"><i class="material-icons left">shopping_basket</i>Products</a>
+  <a href="javascript:void(0);" class="collection-item"><i class="material-icons left">person_pin</i>Customers<span class="new badge">Coming Soon</span></a>
+  <a href="javascript:void(0);" class="collection-item"><i class="material-icons left">money_off</i>Discounts<span class="new badge">Coming Soon</span></a>
+  <a href="javascript:void(0);" class="collection-item"><i class="material-icons left">computer</i>Storefronts<span class="new badge">Coming Soon</span></a>
+</div>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<login>
+  <!-- Modal Structure -->
+  <div #loginModal class="modal">
+    <form class="col s12" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="modal-content">
+        <h4>Login</h4>
+
+        <div class="row">
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="email" type="email" formControlName="email">
+                <label for="email">Email</label>
+                <p *ngIf="loginForm.controls.email.errors && submitted" class="error">This field is required!</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="password" type="password" formControlName="password">
+                <label for="password">Password</label>
+                <p *ngIf="loginForm.controls.password.errors && submitted" class="error">This field is required!</p>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="waves-effect waves-green btn">Login</button>
+      </div>
+    </form>
+  </div>
+</login>
