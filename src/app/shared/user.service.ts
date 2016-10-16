@@ -14,8 +14,13 @@ export class UserService {
   getUser(){
     if(this.auth)
       return this.af.database.object('/customers/' + this.auth.uid);
-    else
-      return this.af.auth.flatMap(auth => this.af.database.object('/customers/' + auth.uid));
+    else{
+      return Observable.create(observer => {
+        firebase.auth().onAuthStateChanged(auth => {
+          this.af.database.object('/customers/' + auth.uid).subscribe(user => observer.next(user));
+        });
+      })
+    }
   }
 
   login(email, password){

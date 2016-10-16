@@ -93,7 +93,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           this.itemCount = snapshots.length;
           let count:number = Math.ceil(snapshots.length / +this.limit);
           this.pageArray = Array(count).fill(count).map((x, i)=>i+1);
-          once.unsubscribe();
+          if(once)
+            once.unsubscribe();
         },
         err => {
           this.items = null;

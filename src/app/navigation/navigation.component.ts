@@ -65,7 +65,7 @@ export class NavigationComponent implements AfterViewInit, OnInit {
       }else{
         $(this.el.nativeElement).closeModal();
         $(this.dropdownButton.nativeElement).dropdown();
-        $(this.menuButton.nativeElement).sideNav();
+        $(this.menuButton.nativeElement).sideNav({closeOnClick: true});
         this.userService.getUser().subscribe((user) => {
           this.user = user;
           this.af.database.object('/retailers/' + user.contact.Store__c + '/record').subscribe((store) => this.store = store);

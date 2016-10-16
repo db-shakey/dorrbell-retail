@@ -3,8 +3,8 @@ import {Http, Headers, Response} from '@angular/http';
 import { AngularFire } from 'angularfire2';
 import {Observable} from 'rxjs/Rx';
 
-//const endpoint: string = 'https://dorrbell-test.herokuapp.com';
-const endpoint: string = 'http://localhost:5050';
+const endpoint: string = 'https://dorrbell-test.herokuapp.com';
+// const endpoint: string = 'http://localhost:5050';
 
 @Injectable()
 export class HerokuService {
@@ -15,13 +15,11 @@ export class HerokuService {
 
     let headers = new Headers();
     return Observable.create(observer => {
-      this.af.auth.subscribe(user => {
-        user.auth.getToken().then(token => {
-          headers.append('authorization', token);
-          observer.next(headers);
-          observer.complete();
-        })
-      })
+      firebase.auth().currentUser.getToken(false).then(function(token){
+        headers.append('authorization', token);
+        observer.next(headers);
+        observer.complete();
+      });
     });
   }
 

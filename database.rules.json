@@ -37,7 +37,9 @@
         "orders" : {
           ".indexOn" : [
             "Order__r/Marked_Completed__c",
-            "Order__r/In_Home_Try_On_Start__c"
+            "Order__r/In_Home_Try_On_Start__c",
+            "Order__c",
+            "Status__c"
           ]
         }
       }

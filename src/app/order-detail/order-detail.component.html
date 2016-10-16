@@ -1,3 +1,154 @@
-<p>
-  order-detail works!
-</p>
+<div class="animated fadeInRight" *ngIf="userService.loggedIn">
+  <div class="row order-details">
+    <div class="col l8 m12 s12">
+      <div class="card">
+        <div class="card-content">
+          <div id="map" #googleMap></div>
+        </div>
+      </div>
+    </div>
+    <div class="col l4 m12 s12">
+      <div class="card">
+        <div class="card-content order-info">
+          <span class="card-title">
+            Order #{{(order?.Order__r.Name) ? order?.Order__r.Name : order?.Order__r.OrderNumber}}
+            <span class="new badge" [attr.data-badge-caption]="order?.Status__c"></span>
+          </span>
+          <div class="card-body">
+            <h5>{{order?.Order__r.In_Home_Try_On_Start__c | date:'short'}}</h5>
+            <p>Try-on time</p>
+          </div>
+          <hr class="m-t-lg m-b-lg"/>
+          <div class="card-body">
+            <h5>{{order?.Order__r.ShipToContact?.Name}}</h5>
+            <address>
+              {{order?.Order__r.ShippingStreet}}<br/>
+              {{order?.Order__r.ShippingCity}}, {{order?.Order__r.ShippingState}} {{order?.Order__r.ShippingPostalCode}}
+            </address>
+            <p *ngIf="order?.Order__r.ShipToContact?.Phone">p: {{order?.Order__r.ShipToContact?.Phone}}</p>
+          </div>
+          <hr class="m-t-lg m-b-lg"/>
+          <div class="card-body">
+            <div>
+              <b>Delivery Shopping Assistant</b>
+              <div *ngIf="order?.Order__r.Delivery_Shopping_Assistant__r">
+                <p>{{order?.Order__r.Delivery_Shopping_Assistant__r?.Name}}</p>
+                <p>p: {{order?.Order__r.Delivery_Shopping_Assistant_Phone__c}}</p>
+              </div>
+              <div *ngIf="!order?.Order__r.Delivery_Shopping_Assistant__r">
+                <p>Not Yet Assigned</p>
+              </div>
+            </div>
+
+            <div class="m-t-md">
+              <b>Return Shopping Assistant</b>
+              <div *ngIf="order?.Order__r.Return_Shopping_Assistant__r">
+                <p>{{order?.Order__r.Return_Shopping_Assistant__r?.Name}}</p>
+                <p>p: {{order?.Order__r.Return_Shopping_Assistant_Phone__c}}</p>
+              </div>
+              <div *ngIf="!order?.Order__r.Return_Shopping_Assistant__r">
+                <p>Not Yet Assigned</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-title">Requested Products</div>
+          <table class="striped responsive-table hightlight product-list">
+            <thead>
+              <th>&nbsp;</th>
+              <th>Product Name</th>
+              <th>Variant</th>
+              <th>Family</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>&nbsp;</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of productList">
+                <td class="product-image valign-wrapper"><img [src]="record.product.Image__r.Image_Thumb__c"/></td>
+                <td>{{record.product.Root_Product_Name__c}}</td>
+                <td>{{record.product.Name}}</td>
+                <td>{{record.product.Family}}</td>
+                <td>{{record.orderProduct.UnitPrice | currency:'USD':true:'1.2-2'}}</td>
+                <td>{{record.orderProduct?.Status__c}}</td>
+                <td class="actions">
+                  <a class="waves-effect waves-light btn teal white-text btn-flat"
+                    *ngIf="(order?.Status__c == 'Accepted By Retailer' || order?.Status__c == 'Preparing Delivery') &&
+                            (record.orderProduct.Status__c == 'Requested' || record.orderProduct?.Status__c == 'Ready For Check Out')"
+                    (click)="openVerifyModal(record)">Verify</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Structure -->
+<div id="verify-product-modal" #verifyModal class="modal">
+  <form class="col s12" [formGroup]="productForm" (ngSubmit)="onSubmit(selectedRecord?.index)" *ngIf="selectedRecord">
+    <div class="card horizontal">
+      <div class="card-image">
+        <img [src]="selectedRecord?.product.Image__r.Image_Source__c">
+      </div>
+      <div class="card-stacked">
+        <div class="card-content" *ngIf="!removeView">
+          <div class="available">
+            <a href="javascript:void(0);" (click)="closeModal()" class="modal-close"><i class="material-icons">close</i></a>
+            <h5>
+              {{selectedRecord?.product.Root_Product_Name__c}}
+            </h5>
+            <p>{{selectedRecord?.product.Name}}</p>
+            <dl class="m-t-lg">
+              <dt>Family</dt><dd>{{selectedRecord.product.Family}}</dd>
+            </dl>
+            <dl>
+              <dt>Barcode</dt><dd>{{selectedRecord.product.Barcode__c}}</dd>
+            </dl>
+            <dl>
+              <dt>List Price</dt><dd>{{selectedRecord.product.PricebookEntries.records[0].UnitPrice | currency:'USD':true:'1.2-2'}}</dd>
+            </dl>
+            <div class="input-field col s6 m-t-xl">
+              <i class="material-icons prefix">attach_money</i>
+              <input placeholder="Placeholder" id="unitPrice" type="text" class="validate" [(ngModel)]="selectedRecord.orderProduct.UnitPrice" name="unitPrice" [textMask]="currencyMask" formControlName="UnitPrice">
+              <label for="unitPrice" class="active">Sale Price</label>
+            </div>
+          </div>
+        </div>
+        <div class="card-content unavailable" *ngIf="removeView">
+          <a href="javascript:void(0);" (click)="closeModal()" class="modal-close"><i class="material-icons">close</i></a>
+          <h5>
+            Remove {{selectedRecord?.product.Root_Product_Name__c}}
+          </h5>
+          <div class="input-field m-t-xl">
+            <input type="hidden" formControlName="RemoveReason" [(ngModel)]="selectedRecord.orderProduct.Removed_Reason__c"/>
+            <select #removeSelect class="remove-select">
+              <option value="Can't Find Item">Can't Find Item</option>
+              <option value="Item Is Sold">Item Is Sold</option>
+              <option value="Not Approved For Delivery">Not Approved For Delivery</option>
+              <option value="Other">Other</option>
+            </select>
+            <label>Select a reason for removing this product from the order</label>
+          </div>
+        </div>
+        <div class="card-action right-align" *ngIf="!removeView">
+          <a href="javascript:void(0);" (click)="goToRemove()">Remove Item</a>
+          <button type="submit" class="btn">Confirm</button>
+        </div>
+        <div class="card-action right-align" *ngIf="removeView">
+          <a href="javascript:void(0);" (click)="removeView = false">Cancel</a>
+          <button type="submit" class="btn red">Remove</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

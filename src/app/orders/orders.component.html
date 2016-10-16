@@ -27,7 +27,7 @@
       <div class="card">
         <div class="card-content">
 
-          <table class="striped highlight responsive-table">
+          <table class="striped highlight responsive-table highlight">
             <thead>
               <tr>
                 <th data-field="id">Order Id</th>
@@ -40,8 +40,10 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let item of items | async | orderBy : ['-Order__r.In_Home_Try_On_Start__c']">
-                <td>{{item.Name}}</td>
+              <tr *ngFor="let item of items | async | orderBy : ['-Order__r.In_Home_Try_On_Start__c']" [routerLink]="['/order/' + item.Order__c]">
+                <td>
+                  <a href="javascript:void(0);">{{(item.Order__r.Name) ? item.Order__r.Name : item.Order__r.OrderNumber}}</a>
+                </td>
                 <td>{{item.Order__r.ShipToContact.Name}}</td>
                 <td>{{item.Total__c | currency: 'USD':true:'1.2-2'}}</td>
                 <td>{{item.CreatedDate | date:'short'}}</td>

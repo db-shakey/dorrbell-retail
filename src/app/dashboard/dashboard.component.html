@@ -50,7 +50,7 @@
     <div class="col s12">
       <div class="card">
         <div class="card-content">
-          <div class="card-title">Orders waiting your approval</div>
+          <div class="card-title">Orders awaiting your approval</div>
           <table class="striped responsive-table">
             <thead>
               <th data-field="id">Order Id</th>
@@ -62,8 +62,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of orders | async | orderBy: ['+Order__r.In_Home_Try_On_Start__c'] | slice:1:5">
-                <td><a href="#">{{item.Order__r.Name}}</a></td>
-                <td>{{item.Order__r.ShipToContact.Name}}</td>
+                <td><a [routerLink]="['/order/' + item.Order__c]">{{(item.Order__r.Name) ? item.Order__r.Name : item.Order__r.OrderNumber}}</a></td>
+                <td>{{item.Order__r.ShipToContact?.Name}}</td>
                 <td>{{item.Total__c | currency: 'USD':true:'1.2-2'}}</td>
                 <td>{{item.CreatedDate | date:'short'}}</td>
                 <td>{{item.Order__r.In_Home_Try_On_Start__c | date:'short'}}</td>

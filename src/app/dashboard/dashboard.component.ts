@@ -26,8 +26,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   metrics : any = {};
   caseForm : FormGroup;
 
-  constructor(private af: AngularFire, private userService: UserService, private herokuService: HerokuService) {
-  }
+  constructor(private af: AngularFire, private userService: UserService, private herokuService: HerokuService) {  }
 
   ngOnInit() {
     this.userService.getUser().subscribe(user =>  {
@@ -59,7 +58,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       });
 
       this.orders = this.af.database.list('/retailers/' + user.contact.Store__c + '/orders', {
-        query : {orderByChild: 'Status__c', equalTo: 'New'}
+        query : {orderByChild: 'Status__c', equalTo: 'New', limitToLast: 5}
       });
 
       this.metrics.products = this.af.database.object('/retailers/' + user.contact.Store__c + '/record/Products__r/totalSize');
